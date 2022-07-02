@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="kinders" type="com.vakhnenko.entities.Kinder[]"*/-->
+<!--/*@thymesVar id="garden" type="String"*/-->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <title>Список детей</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="access" type="boolean"*/-->
+<!--/*@thymesVar id="archived" type="boolean"*/-->
+<!--/*@thymesVar id="clearArchive" type="String"*/-->
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+            <div th:if="${access}">
+                <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="add">
+                    Добавить
+                </button>
+                <button th:if="${clearArchive}" type="submit" class="btn btn-outline-secondary mr-5"
+                        name="clearDeleted">
+                    Очистить архив
+                </button>
+                <button type="submit" class="btn btn-outline-primary mr-5" name="del">
+                    Удалить
+                </button>
+            </div>
+            <button class="btn btn-outline-primary mr-auto" type="submit" name="search">
+                Поиск...
+            </button>
+        </form>
+        <form class="form-inline">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">
+            </button>
+        </form>
+    </nav>
+</div>
+
+<form>
+    <div th:if="${kinders}">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-lg-4" th:each="kinder : ${kinders}">
+                    <div class="card mt-3 mb-3">
+                        <div class="card-header">
+                            <img th:if="${kinder.getGen()} == 'М'" class="card-img-top" th:src="@{/images/boy_icon.png}"
+                                 th:alt="'Тут должна быть картинка, но её нет...'"
+                                 th:style="'width: 163px; height: 180px; margin-left: auto; margin-right: auto'">
+                            <img th:if="${kinder.getGen()} == 'Ж'" class="card-img-top"
+                                 th:src="@{/images/girl_icon.png}"
+                                 th:alt="'Тут должна быть картинка, но её нет...'"
+                                 th:style="'width: 163px; height: 180px; margin-left: auto; margin-right: auto'">
+                        </div>
+                        <div class="card-body">
+                            <h5 align="center" class="card-title mt-2" th:text="${kinder.getFIO()}"></h5>
+                            <h6 align="center" class="card-text"
+                                th:text="'Дата рождения: ' + ${kinder.getBirth()}"></h6>
+                            <h6 align="center" class="card-text" th:text="'Группа: ' + ${kinder.getGroup()}"></h6>
+                        </div>
+                        <div class="card-footer">
+                            <div th:if="${archived} == null">
+                                <a th:href="'#kinder'+${kinder.getId()}">
+                                    <button type="submit" class="btn btn-info float-left" name="openKinder"
+                                            th:value="${kinder.getId()}">
+                                        Открыть
+                                    </button>
+                                </a>
+                                <button type="submit" class="btn btn-danger float-right" name="delKinder"
+                                        th:value="${kinder.getId()}" th:if="${access}">
+                                    Удалить
+                                </button>
+                            </div>
+                            <button class="btn btn-dark" name="delKinder" th:value="${kinder.getId()}"
+                                    th:if="${archived}">
+                                Восстановить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="d-flex mt-5 mb-3">
+            <button th:if="${access} and ${archived} == null" type="submit" class="btn-secondary ml-2"
+                    name="goToDeleted">К
+                удаленным записям
+            </button>
+            <button th:if="${archived}" type="submit" class="btn-secondary ml-2" name="goBack">Назад</button>
+            <!--/*@thymesVar id="current_offset" type="int"*/-->
+            <button class="btn-primary ml-auto" th:value="${current_offset}" name="prev">Показать предыдущие...
+            </button>
+            <button class="btn-primary ml-3" th:value="${current_offset}" name="next">Показать следующие...</button>
+            <!--/*@thymesVar id="showMuch" type="String"*/-->
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="50"
+                   th:checked="${showMuch == '50'}">50
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="100"
+                   th:checked="${showMuch == '100'}">100
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="150"
+                   th:checked="${showMuch == '150'}"><span class="mr-5">150</span>
+        </div>
+    </div>
+</form>
+<!--/*@thymesVar id="delete" type="String"*/-->
+<div th:if="${delete} != null">
+    <p th:replace="modals :: confirmModal(${delete})"></p>
+</div>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+
+</body>
+</html>

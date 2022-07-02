@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="type" type="String"*/-->
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${type}"></title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+        </form>
+    </nav>
+</div>
+
+<form>
+    <!--/*@thymesVar id="table" type="String"*/-->
+    <!--/*@thymesVar id="id" type="String"*/-->
+    <input type="hidden" name="currentTable" th:value="${table}">
+    <input type="hidden" name="currentId" th:value="${id}">
+    <input type="hidden" name="currentOperation" th:value="${type}">
+
+    <div th:if="${table} == 'kids'">
+        <!--/*@thymesVar id="filter" type="String"*/-->
+        <!--/*@thymesVar id="l_name" type="String"*/-->
+        <!--/*@thymesVar id="f_name" type="String"*/-->
+        <!--/*@thymesVar id="m_name" type="String"*/-->
+        <!--/*@thymesVar id="birth_y" type="String"*/-->
+        <!--/*@thymesVar id="y_op" type="String"*/-->
+        <!--/*@thymesVar id="birth_m" type="String"*/-->
+        <!--/*@thymesVar id="m_op" type="String"*/-->
+        <!--/*@thymesVar id="birth_d" type="String"*/-->
+        <!--/*@thymesVar id="d_op" type="String"*/-->
+        <!--/*@thymesVar id="birth_date" type="String"*/-->
+        <!--/*@thymesVar id="gender" type="String"*/-->
+        <!--/*@thymesVar id="garden" type="String"*/-->
+        <!--/*@thymesVar id="group" type="String"*/-->
+        <!--/*@thymesVar id="groups" type="String[]"*/-->
+        <!--/*@thymesVar id="gardens" type="String[]"*/-->
+        <!--/*@thymesVar id="garden_ids" type="String[]"*/-->
+        <!--/*@thymesVar id="graft_op" type="String"*/-->
+        <!--/*@thymesVar id="graft_count" type="String"*/-->
+        <div class="modal-body">
+            <p th:if="${filter}"><input type="hidden" name="filter" th:value="${filter}">
+            <div class="row mb-3">
+                Фамилия: <input class="ml-2" type="text" th:value="${l_name}" name="l_name">
+            </div>
+            <div class="row mb-3">
+                Имя: <input class="ml-2" type="text" th:value="${f_name}" name="f_name">
+            </div>
+            <div class="row mb-3">
+                Отчество: <input class="ml-2" type="text" th:value="${m_name}" name="m_name">
+            </div>
+            <div th:if="${type} == 'search' or ${type} == 'delete'">
+                <div class="row mb-3">
+                    <p>Год рождения: <select class="ml-2" id="y_op" name="y_op"
+                                             th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                        <option value="=" th:selected="${y_op eq '='}">=</option>
+                        <option value=">" th:selected="${y_op eq '>'}">&gt;</option>
+                        <option value="<" th:selected="${y_op eq '<'}">&lt;</option>
+                        <option value=">=" th:selected="${y_op eq '>='}">&gt;=</option>
+                        <option value="<=" th:selected="${y_op eq '<='}">&lt;=</option>
+                    </select> <input type="number" class="ml-2" th:value="${birth_y}" name="birth_y"></p>
+                </div>
+                <div class="row mb-3">
+                    <p>Месяц рождения: <select class="ml-2" id="m_op" name="m_op"
+                                               th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                        <option value="=" th:selected="${m_op eq '='}">=</option>
+                        <option value=">" th:selected="${m_op eq '>'}">&gt;</option>
+                        <option value="<" th:selected="${m_op eq '<'}">&lt;</option>
+                        <option value=">=" th:selected="${m_op eq '>='}">&gt;=</option>
+                        <option value="<=" th:selected="${m_op eq '<='}">&lt;=</option>
+                    </select> <input type="number" class="ml-2" th:value="${birth_m}" name="birth_m"></p>
+                </div>
+                <div class="row mb-3">
+                    <p>День рождения: <select class="ml-2" id="d_op" name="d_op"
+                                              th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                        <option value="=" th:selected="${d_op eq '='}">=</option>
+                        <option value=">" th:selected="${d_op eq '>'}">&gt;</option>
+                        <option value="<" th:selected="${d_op eq '<'}">&lt;</option>
+                        <option value=">=" th:selected="${d_op eq '>='}">&gt;=</option>
+                        <option value="<=" th:selected="${d_op eq '<='}">&lt;=</option>
+                    </select> <input type="number" class="ml-2" th:value="${birth_d}" name="birth_d"></p>
+                </div>
+            </div>
+            <div class="row mb-3" th:if="${type} == 'add' or ${type} == 'change'">
+                <p>Дата рождения: <input type="date" class="ml-2" th:value="${birth_date}" name="birth_date"></p>
+            </div>
+            <div class="row mb-3">
+                <p>Пол: <select class="ml-2" id="gender" name="gender" required>
+                    <option value="М" th:selected="${gender eq 'М'}">Мужской</option>
+                    <option value="Ж" th:selected="${gender eq 'Ж'}">Женский</option>
+                    <option th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null"
+                            th:value="''" th:text="'Не указано'" selected></option>
+                </select></p>
+            </div>
+            <div class="row mb-3">
+                <p>Посещает детский сад №: <select class="ml-2" id="garden" name="garden">
+                    <option th:each="gard: ${gardens}" th:value="${garden_ids[gardStat.index]}" th:text="${gard}"
+                            th:selected="${gard == garden}"></option>
+                    <option th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null"
+                            th:value="''" th:text="'Не указано'" selected></option>
+                </select></p>
+            </div>
+            <div class="row mb-3">
+                <p>Группа: <select class="ml-2" id="group" name="group" required>
+                    <option th:each="gr: ${groups}" th:value="${gr}" th:text="${gr}"
+                            th:selected="${gr == group}"></option>
+                    <option th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null"
+                            th:value="''" th:text="'Не указано'" selected></option>
+                </select></p>
+            </div>
+            <div class="row mb-3" th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                <p>Количество прививок: <select class="ml-2" id="graft_op" name="graft_op"
+                                                th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${graft_op eq '='}">=</option>
+                    <option value=">" th:selected="${graft_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${graft_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${graft_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${graft_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" name="graft_count" th:value="${graft_count}"></p>
+            </div>
+            <div class="row mb-3" th:if="${type} == 'search'">
+                <p>Фильтр: <select name="filter" id="filter" class="ml-2">
+                    <option value="all">Показывать всех</option>
+                    <option value="grafts">Только с прививками</option>
+                    <option value="no_grafts">Только без прививок</option>
+                </select></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table} == 'gardens' ">
+        <!--/*@thymesVar id="num" type="String"*/-->
+        <!--/*@thymesVar id="district" type="String"*/-->
+        <!--/*@thymesVar id="districts" type="String[]"*/-->
+        <!--/*@thymesVar id="types" type="String[]"*/-->
+        <!--/*@thymesVar id="type" type="String"*/-->
+        <!--/*@thymesVar id="year" type="String"*/-->
+        <!--/*@thymesVar id="year_op" type="String"*/-->
+        <!--/*@thymesVar id="count" type="String"*/-->
+        <!--/*@thymesVar id="count_op" type="String"*/-->
+        <div class="modal-body">
+            <!-- div class="row" -->
+            <div class="row mb-3">
+                Номер: <input class="ml-2" type="number" min="1" max="1000" th:value="${num}" name="num">
+            </div>
+            <div class="row mb-3">
+                <p>Район: <select class="ml-2" id="district" name="district" required>
+                    <option th:each="dis: ${districts}" th:value="${dis}" th:text="${dis}"
+                            th:selected="${dis == district}"></option>
+                    <option th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null"
+                            th:value="''" th:text="'Не указано'" selected></option>
+                </select></p>
+            </div>
+            <div class="row mb-3">
+                <p>Тип собственности: <select class="ml-2" id="type" name="type" required>
+                    <option th:each="typ: ${types}" th:value="${typ}" th:text="${typ}"
+                            th:selected="${typ == type}"></option>
+                    <option th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null"
+                            th:value="''" th:text="'Не указано'" selected></option>
+                </select></p>
+            </div>
+            <div class="row mb-3">
+                <p>Год основания: <select class="ml-2" id="year_op" name="year_op"
+                                          th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${year_op eq '='}">=</option>
+                    <option value=">" th:selected="${year_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${year_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${year_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${year_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" size="4" min="1984" th:value="${year}" name="year"></p>
+            </div>
+            <div class="row mb-3" th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                <p>Количество детей: <select class="ml-2" id="count_op" name="count_op">
+                    <option value="=" th:selected="${count_op eq '='}">=</option>
+                    <option value=">" th:selected="${count_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${count_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${count_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${count_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="text" th:value="${count}" name="count"></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table} == 'grafts' or ${table} == 'preview_grafts'">
+        <!--/*@thymesVar id="ill" type="String"*/-->
+        <!--/*@thymesVar id="date" type="String"*/-->
+        <!--/*@thymesVar id="date_op" type="String"*/-->
+        <div class="modal-body">
+            <div class="row mb-3" th:if="!(${table} == 'preview_grafts' and ${type} == 'search')">
+                Заболевание: <input class="ml-2" type="text" th:value="${ill}" name="ill">
+            </div>
+            <div class="row mb-3">
+                <p>Дата: <select class="ml-2" id="date_op" name="date_op"
+                                 th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${date_op eq '='}">=</option>
+                    <option value="<" th:selected="${date_op eq '<'}">&lt;</option>
+                    <option value=">" th:selected="${date_op eq '>'}">&gt;</option>
+                    <option value=">=" th:selected="${date_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${date_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="date" th:value="${date}" name="date"></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table} == 'transfers' ">
+        <!--/*@thymesVar id="filter" type="String"*/-->
+        <!--/*@thymesVar id="kid" type="String"*/-->
+        <!--/*@thymesVar id="ill" type="String"*/-->
+        <!--/*@thymesVar id="begin" type="String"*/-->
+        <!--/*@thymesVar id="date_op" type="String"*/-->
+        <!--/*@thymesVar id="length" type="String"*/-->
+        <!--/*@thymesVar id="len_op" type="String"*/-->
+        <!--/*@thymesVar id="cost" type="String"*/-->
+        <!--/*@thymesVar id="cost_op" type="String"*/-->
+        <!--/*@thymesVar id="complics" type="String"*/-->
+        <!--/*@thymesVar id="compl_op" type="String"*/-->
+        <div class="modal-body">
+            <div class="row mb-3">
+                Заболевание: <input class="ml-2" type="text" th:value="${ill}" name="ill">
+            </div>
+            <div class="row mb-3">
+                <p>Дата начала: <select class="ml-2" th:id="date_op" name="date_op"
+                                        th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${date_op eq '='}">=</option>
+                    <option value=">" th:selected="${date_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${date_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${date_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${date_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="date" th:value="${begin}" name="begin"></p>
+            </div>
+            <div class="row mb-3">
+                <p>Продолжительность: <select class="ml-2" id="len_op" name="len_op"
+                                              th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${len_op eq '='}">=</option>
+                    <option value=">" th:selected="${len_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${len_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${len_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${len_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" th:value="${length}" name="length"></p>
+            </div>
+            <div class="row mb-3">
+                <p>Стоимость лечения: <select class="ml-2" id="cost_op" name="cost_op"
+                                              th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${cost_op eq '='}">=</option>
+                    <option value=">" th:selected="${cost_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${cost_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${cost_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${cost_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" th:value="${cost}" name="cost"></p>
+            </div>
+            <div class="row mb-3" th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                <p>Количество осложнений: <select class="ml-2" id="compl_op" name="compl_op">
+                    <option value="=" th:selected="${compl_op eq '='}">=</option>
+                    <option value=">" th:selected="${compl_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${compl_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${compl_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${compl_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" th:value="${complics}" name="complics"></p>
+            </div>
+            <div class="row mb-3" th:if="${type} == 'search'">
+                <p>Фильтр: <select name="filter" th:id="filter" class="ml-2">
+                    <option value="all" selected>Показывать все</option>
+                    <option value="compl">Только с осложнениями</option>
+                    <option value="no_compl">Только без осложнений</option>
+                </select></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table} == 'complications' ">
+        <!--/*@thymesVar id="transfer" type="String"*/-->
+        <!--/*@thymesVar id="kid" type="String"*/-->
+        <!--/*@thymesVar id="ill" type="String"*/-->
+        <!--/*@thymesVar id="cost" type="String"*/-->
+        <!--/*@thymesVar id="cost_op" type="String"*/-->
+        <div class="modal-body">
+            <div class="row mb-3">
+                Заболевание: <input class="ml-2" type="text" th:value="${ill}" name="ill">
+            </div>
+            <div class="row mb-3">
+                <p>Стоимость лечения: <select class="ml-2" th:id="cost_op" name="cost_op"
+                                              th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                    <option value="=" th:selected="${cost_op eq '='}">=</option>
+                    <option value=">" th:selected="${cost_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${cost_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${cost_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${cost_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" th:value="${cost}" name="cost"></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table} == 'ills' ">
+        <!--/*@thymesVar id="ill" type="String"*/-->
+        <!--/*@thymesVar id="count" type="String"*/-->
+        <!--/*@thymesVar id="count_op" type="String"*/-->
+        <div class="modal-body">
+            <div class="row mb-3">
+                Заболевание: <input class="ml-2" type="text" th:value="${ill}" name="ill">
+            </div>
+            <div class="row mb-3" th:if="(${type} == 'search' or ${type} == 'delete') and ${id} == null">
+                <p>Количество случаев: <select class="ml-2" th:id="count_op" name="count_op">
+                    <option value="=" th:selected="${count_op eq '='}">=</option>
+                    <option value=">" th:selected="${count_op eq '>'}">&gt;</option>
+                    <option value="<" th:selected="${count_op eq '<'}">&lt;</option>
+                    <option value=">=" th:selected="${count_op eq '>='}">&gt;=</option>
+                    <option value="<=" th:selected="${count_op eq '<='}">&lt;=</option>
+                </select> <input class="ml-2" type="number" th:value="${count}" name="count"></p>
+            </div>
+        </div>
+    </div>
+
+    <button th:if="${error} != 'Ошибка: Некорректные параметры!'" type="submit" class="btn btn-primary" name="submit">
+        Подтвердить
+    </button>
+
+    <!--/*@thymesVar id="confirm" type="String"*/-->
+    <div th:if="${confirm}">
+        <p th:replace="modals :: confirmModal(${confirm})"></p>
+    </div>
+</form>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error}">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>

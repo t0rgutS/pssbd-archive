@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="gardens" type="com.vakhnenko.entities.Garden[]"*/-->
+<!--/*@thymesVar id="operation" type="String"*/-->
+<head>
+    <meta charset="UTF-8">
+    <title>Детские сады</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="access" type="boolean"*/-->
+<!--/*@thymesVar id="archived" type="boolean"*/-->
+<!--/*@thymesVar id="clearArchive" type="String"*/-->
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+            <div th:if="${access}">
+                <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="add">
+                    Добавить
+                </button>
+                <button th:if="${clearArchive}" type="submit" class="btn btn-outline-secondary mr-5"
+                        name="clearDeleted">
+                    Очистить архив
+                </button>
+                <button type="submit" class="btn btn-outline-primary mr-5" name="del">
+                    Удалить
+                </button>
+            </div>
+            <button class="btn btn-outline-primary mr-auto" type="submit" name="search">
+                Поиск...
+            </button>
+        </form>
+        <form class="form-inline">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">
+            </button>
+        </form>
+    </nav>
+</div>
+
+<form>
+    <div th:if="${gardens} != null">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-lg-4" th:each="garden : ${gardens}">
+                    <div class="card mt-3 mb-3">
+                        <div class="card-header">
+                            <img class="card-img-top" th:src="@{/images/garden_pic.jpg}"
+                                 th:alt="'Тут должна быть картинка, но её нет...'">
+                        </div>
+                        <div class="card-body">
+                            <h5 align="center" class="card-title mt-2"
+                                th:text="'Детский сад №' + ${garden.getNumber()}"></h5>
+                            <h5 align="center" class="card-text" th:text="'Район: ' + ${garden.getDistrict()}"></h5>
+                        </div>
+                        <div class="card-footer">
+                            <div th:if="${archived} == null">
+                                <button type="submit" class="btn btn-info float-left" name="openGarden"
+                                        th:value="${garden.getId()}">
+                                    Открыть
+                                </button>
+                                <button type="submit" class="btn btn-danger float-right" name="delGarden"
+                                        th:value="${garden.getId()}" th:if="${access}">
+                                    Удалить
+                                </button>
+                            </div>
+                            <button class="btn btn-dark" name="delGarden" th:value="${garden.getId()}"
+                                    th:if="${archived}">
+                                Восстановить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="d-flex mt-5 mb-3">
+            <button th:if="${access} and ${archived} == null" type="submit" class="btn-secondary ml-2"
+                    name="goToDeleted">К
+                удаленным записям
+            </button>
+            <button th:if="${archived}" type="submit" class="btn-secondary ml-2" name="goBack">Назад</button>
+            <!--/*@thymesVar id="current_offset" type="int"*/-->
+            <button class="btn-primary ml-auto" th:value="${current_offset}" name="prev">Показать предыдущие...
+            </button>
+            <button class="btn-primary ml-3" th:value="${current_offset}" name="next">Показать следующие...</button>
+            <!--/*@thymesVar id="showMuch" type="String"*/-->
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="50"
+                   th:checked="${showMuch == '50'}">50
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="100"
+                   th:checked="${showMuch == '100'}">100
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="150"
+                   th:checked="${showMuch == '150'}"><span class="mr-5">150</span>
+        </div>
+    </div>
+</form>
+<!--/*@thymesVar id="delete" type="String"*/-->
+<div th:if="${delete} != null">
+    <p th:replace="modals :: confirmModal('Все данные об этом детском саде будут удалены. Вы уверены, что хотите продолжить?')"></p>
+</div>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>

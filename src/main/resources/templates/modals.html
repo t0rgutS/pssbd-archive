@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Модальные окна</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="errorModal(message)" class="custom-modal show" id="errorModal" tabindex="-1"
+     role="dialog" data-th-background="static" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="card-header">
+                <h4 th:text="${message}"></h4>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="close"
+                        onclick="document.getElementById('errorModal').style.display='none'">Ok...</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:fragment="confirmModal(message)" class="custom-modal show" id="confirmModal" tabindex="-1"
+     role="dialog" data-th-background="static" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="card-header">
+                <h4 th:text="${message}"></h4>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="close" name="Ok" style="float: left; color: green">Подтвердить</button>
+                <button type="button" class="close" onclick="document.getElementById('confirmModal').style.display='none'"
+                        style="float: right; color: darkred">
+                    Отменить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

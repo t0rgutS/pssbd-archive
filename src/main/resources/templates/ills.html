@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Справочник заболеваний</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="ills" type="com.vakhnenko.entities.Illness[]"*/-->
+<!--/*@thymesVar id="archived" type="boolean"*/-->
+<!--/*@thymesVar id="access" type="boolean"*/-->
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+            <div th:if="${access}">
+                <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="add">
+                    Добавить
+                </button>
+                <button th:if="${archived}" type="submit" class="btn btn-outline-secondary mr-5" name="clearDeleted">
+                    Очистить архив
+                </button>
+                <button type="submit" class="btn btn-outline-primary mr-5" name="del">
+                    Удалить
+                </button>
+            </div>
+            <button class="btn btn-outline-primary mr-auto" type="submit" name="search">
+                Поиск...
+            </button>
+        </form>
+        <form class="form-inline">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">
+            </button>
+        </form>
+    </nav>
+</div>
+
+<form>
+    <div th:if="${ills} != null">
+        <table border="1" class="table">
+            <tr class="table-secondary">
+                <th class="col-sm-6 col-lg-6">Номер</th>
+                <th class="col-sm-6 col-lg-6">Заболевание</th>
+                <th class="col-sm-6 col-lg-6">Количество зарегистрированных случаев</th>
+                <div th:if="${access}">
+                    <th class="col-sm-6 col-lg-6"></th>
+                    <th th:if="${archived} == null" class="col-sm-6 col-lg-6"></th>
+                </div>
+            </tr>
+            <tr th:each="ill: ${ills}">
+                <th class="col-sm-6 col-lg-6" th:text="${illStat.index} + 1"></th>
+                <th class="col-sm-6 col-lg-6" th:text="${ill.getIll()}"></th>
+                <th class="col-sm-6 col-lg-6" th:text="${ill.getTotal_count()}"></th>
+                <div th:if="${access} and ${archived} == null">
+                    <th class="col-sm-6 col-lg-6">
+                        <button class="btn btn-link" name="changeIll" th:value="${ill.getId()}">
+                            Изменить
+                        </button>
+                    </th>
+                    <th class="col-sm-6 col-lg-6">
+                        <button class="btn btn-dark" name="delIll" th:value="${ill.getId()}">
+                            Удалить
+                        </button>
+                    </th>
+                </div>
+                <th class="col-sm-6 col-lg-6" th:if="${archived}">
+                    <button class="btn btn-dark" name="delIll" th:value="${ill.getId()}">
+                        Восстановить
+                    </button>
+                </th>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <div class="d-flex mt-5 mb-3">
+            <button th:if="${access} and ${archived} == null" type="submit" class="btn-secondary ml-2"
+                    name="goToDeleted">К
+                удаленным записям
+            </button>
+            <button th:if="${archived}" type="submit" class="btn-secondary ml-2" name="goBack">Назад</button>
+        </div>
+    </div>
+</form>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>

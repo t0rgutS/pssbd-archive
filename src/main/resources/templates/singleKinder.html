@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Данные ребенка</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="kinder" type="com.vakhnenko.entities.Kinder"*/-->
+<!--/*@thymesVar id="access" type="boolean"*/-->
+<!--/*@thymesVar id="accessMain" type="boolean"*/-->
+<div th:if="${kinder} != null">
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+            <!--/*@thymesVar id="acess" type="boolean"*/-->
+        </form>
+        <form class="form-inline">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">
+            </button>
+        </form>
+    </nav>
+</div>
+<!--/*@thymesVar id="table" type="String"*/-->
+<!--/*@thymesVar id="preview" type="boolean"*/-->
+<!--/*@thymesVar id="archived" type="boolean"*/-->
+<!--/*@thymesVar id="clearArchive" type="String"*/-->
+<form>
+    <div th:if="${kinder} != null">
+        <!--div th:each="kinder : ${kinders}"-->
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <button th:if="${accessMain}" class='btn btn-primary' name="change" th:value="${kinder.getId()}"><img
+                        th:src="@{/images/redact.png}"
+                        th:alt="'Нажмите сюда для редактирования'"
+                        style="width: 50px; height: 30px"></button>
+                <h6 class="display-1" th:text="${kinder.getL_name()} + ' ' + ${kinder.getF_name()} + ' '
+            + ${kinder.getM_name()}"></h6>
+                <p class="lead" th:text="'Пол: ' + ${kinder.getGen()}"></p>
+                <p class="lead" th:text="'Дата рождения: ' + ${kinder.getBirth()}"></p>
+                <p class="lead" th:text="'Посещает детский сад №: ' + ${kinder.getGard_num()}"></p>
+                <p class="lead" th:text="'Группа: ' + ${kinder.getGroup()}"></p>
+                <p>
+                    <button class="btn btn-secondary" name="showTransfers">Посмотреть список перенесенных болезней
+                    </button>
+                </p>
+                <p>
+                    <button class="btn btn-secondary" name="showGrafts">Посмотреть список прививок</button>
+                </p>
+                <p>
+                    <button class="btn btn-secondary" name="generateReport">Составить отчет по количеству и стоимости
+                        лечения заболеваний
+                    </button>
+                </p>
+            </div>
+        </div>
+        <input type="hidden" th:value="${table}" name="showing">
+        <input type="hidden" th:value="${preview}" name="preview">
+        <!--/*@thymesVar id="transfers" type="com.vakhnenko.entities.Transfer[]"*/-->
+        <div th:if="${transfers}">
+            <div class="d-flex flex-row mb-3">
+                <div th:if="${access}">
+                    <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="add">
+                        Добавить
+                    </button>
+                    <button th:if="${clearArchive}" type="submit" class="btn btn-outline-secondary mr-5"
+                            name="clearDeleted">
+                        Очистить архив
+                    </button>
+                    <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="del">
+                        Удалить
+                    </button>
+                </div>
+                <button class="btn btn-outline-primary mr-auto" type="submit" name="search">
+                    Поиск...
+                </button>
+            </div>
+            <table border="1" class="table">
+                <tr class="table-secondary">
+                    <th class="col-sm-6 col-lg-6">Номер</th>
+                    <th class="col-sm-6 col-lg-6">Заболевание</th>
+                    <th class="col-sm-6 col-lg-6">Дата начала</th>
+                    <th class="col-sm-6 col-lg-6">Длительность (дней)</th>
+                    <th class="col-sm-6 col-lg-6">Стоимость лечения (руб.)</th>
+                    <th class="col-sm-6 col-lg-6">Количество осложнений</th>
+                    <div th:if="${access} and ${archived} == null">
+                        <th class="col-sm-6 col-lg-6"></th>
+                        <th class="col-sm-6 col-lg-6"></th>
+                    </div>
+                    <th class="col-sm-6 col-lg-6" th:if="${archived}"></th>
+                </tr>
+                <tr th:each="transfer: ${transfers}">
+                    <th class="col-sm-6 col-lg-6" th:text="${transferStat.index} + 1"></th>
+                    <th class="col-sm-6 col-lg-6" th:text="${transfer.getIll()}"></th>
+                    <th class="col-sm-6 col-lg-6" th:text="${transfer.getBegin()}"></th>
+                    <th class="col-sm-6 col-lg-6" th:text="${transfer.getLen()}"></th>
+                    <th class="col-sm-6 col-lg-6" th:text="${transfer.getCost()}"></th>
+                    <th class="col-sm-6 col-lg-6" th:text="${transfer.getComplics()}"></th>
+                    <div th:if="${access} and ${archived} == null">
+                        <th class="col-sm-6 col-lg-6">
+                            <button class="btn btn-link" name="openTransfer" th:value="${transfer.getId()}">
+                                Открыть
+                            </button>
+                        </th>
+                        <th class="col-sm-6 col-lg-6">
+                            <button class="btn btn-dark" name="delTransfer" th:value="${transfer.getId()}">
+                                Удалить
+                            </button>
+                        </th>
+                    </div>
+                    <th class="col-sm-6 col-lg-6" th:if="${archived}">
+                        <button class="btn btn-dark" name="delTransfer" th:value="${transfer.getId()}">
+                            Восстановить
+                        </button>
+                    </th>
+                </tr>
+            </table>
+        </div>
+
+        <!--/*@thymesVar id="grafts" type="com.vakhnenko.entities.Graft[]"*/-->
+        <div th:if="${grafts}">
+
+            <div th:if="${preview}">
+                <div class="d-flex flex-row mb-3">
+                    <div th:if="${access}">
+                        <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5"
+                                name="add">
+                            Добавить
+                        </button>
+                        <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="del">
+                            Удалить
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-primary" type="submit" name="search">
+                        Поиск...
+                    </button>
+                </div>
+
+                <table border="1" class="table">
+                    <tr class="table-secondary">
+                        <th class="col-sm-6 col-lg-6">Номер</th>
+                        <th class="col-sm-6 col-lg-6">Дата прививки</th>
+                        <th class="col-sm-6 col-lg-6">Количество заболеваний</th>
+                        <th class="col-sm-6 col-lg-6"></th>
+                    </tr>
+                    <tr th:each="graft: ${grafts}">
+                        <th class="col-sm-6 col-lg-6" th:text="${graftStat.index} + 1"></th>
+                        <th class="col-sm-6 col-lg-6" th:text="${graft.getDate()}"></th>
+                        <th class="col-sm-6 col-lg-6" th:text="${graft.getIllCount()}"></th>
+                        <th class="col-sm-6 col-lg-6">
+                            <button class="btn btn-link" name="openGraft" th:value="${graft.getDate()}">
+                                Открыть
+                            </button>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:if="${preview} == false">
+                <!--/*@thymesVar id="selectedDate" type="String"*/-->
+                <!--input type="hidden" th:value="${selectedDate}" name="selectedDate"-->
+                <!--/*@thymesVar id="access" type="boolean"*/-->
+                <div class="d-flex flex-row mb-3">
+                    <div th:if="${access}">
+                        <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5"
+                                name="add">
+                            Добавить
+                        </button>
+                        <button th:if="${clearArchive}" type="submit" class="btn btn-outline-secondary mr-5"
+                                name="clearDeleted">
+                            Очистить архив
+                        </button>
+                        <button th:if="${archived} == null" type="submit" class="btn btn-outline-primary mr-5" name="del">
+                            Удалить
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-primary mr-auto" type="submit" name="search">
+                        Поиск...
+                    </button>
+                </div>
+
+                <table border="1" class="table">
+                    <tr class="table-secondary">
+                        <th class="col-sm-6 col-lg-6">Номер</th>
+                        <th class="col-sm-6 col-lg-6">Заболевание</th>
+                        <th class="col-sm-6 col-lg-6">Дата прививки</th>
+                        <div th:if="${access} and ${archived} == null">
+                            <th class="col-sm-6 col-lg-6"></th>
+                            <th class="col-sm-6 col-lg-6"></th>
+                        </div>
+                        <th class="col-sm-6 col-lg-6" th:if="${archived}"></th>
+                    </tr>
+                    <tr th:each="graft: ${grafts}">
+                        <th class="col-sm-6 col-lg-6" th:text="${graftStat.index} + 1"></th>
+                        <th class="col-sm-6 col-lg-6" th:text="${graft.getIll()}"></th>
+                        <th class="col-sm-6 col-lg-6" th:text="${graft.getDate()}"></th>
+                        <div th:if="${access} and ${archived} == null">
+                            <th class="col-sm-6 col-lg-6">
+                                <button class="btn btn-link" name="changeGraft" th:value="${graft.getId()}">
+                                    Изменить
+                                </button>
+                            </th>
+                            <th class="col-sm-6 col-lg-6">
+                                <button class="btn btn-dark" name="delGraft" th:value="${graft.getId()}">
+                                    Удалить
+                                </button>
+                            </th>
+                        </div>
+                        <th class="col-sm-6 col-lg-6" th:if="${archived}">
+                            <button class="btn btn-dark" name="delGraft" th:value="${graft.getId()}">
+                                Восстановить
+                            </button>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${table}">
+        <div class="d-flex mt-5 mb-3">
+            <button th:if="${access} and ${archived} == null" type="submit" class="btn-secondary ml-2"
+                    name="goToDeleted">К
+                удаленным записям
+            </button>
+            <button th:if="${archived}" type="submit" class="btn-secondary ml-2" name="goBack">Назад</button>
+            <!--/*@thymesVar id="current_offset" type="int"*/-->
+            <button class="btn-primary ml-auto" th:value="${current_offset}" name="prev">Показать предыдущие...</button>
+            <button class="btn-primary ml-3" th:value="${current_offset}" name="next">Показать следующие...</button>
+            <!--/*@thymesVar id="showMuch" type="String"*/-->
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="50"
+                   th:checked="${showMuch == '50'}">50
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="100"
+                   th:checked="${showMuch == '100'}">100
+            <input type="radio" class="custom-radio ml-2 p-2" name="showMuch" value="150"
+                   th:checked="${showMuch == '150'}"><span class="mr-5">150</span>
+        </div>
+    </div>
+</form>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error}">
+    <p th:replace="modals :: errorModal(${error})">
+</div>
+</body>
+</html>

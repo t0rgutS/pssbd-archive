@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <script src="../static/js/bootstrap.min.js" th:href="@{/js/bootstrap.js}"></script>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand mr-auto" href="#">Главная</a>
+        <form class="form-inline my-2 my-lg-0">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">Выход</button>
+        </form>
+    </nav>
+</div>
+<form>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/garden_pic.jpg}"
+                             th:alt="'Тут должна быть картинка, но её нет...'" th:width="'286'" th:height="'180'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Детские сады</h5>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info" name="goToGardens">
+                            Перейти
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/kid_list_icon.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'" th:width="'286'" th:height="'180'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Список детей</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="goToKids">
+                            Перейти
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/evil_micro.jpg}"
+                             th:alt="'Тут должна быть картинка, но её нет...'" th:width="'286'" th:height="'180'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Справочник болезней</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="goToIlls">
+                            Перейти
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!--/*@thymesVar id="canSeeReport" type="boolean"*/-->
+            <div class="col-sm-8 col-lg-4" th:if="${canSeeReports}">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/otch_icon.jpg}"
+                             th:alt="'Тут должна быть картинка, но её нет...'" th:width="'286'" th:height="'180'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Отчетность</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="goToReports">
+                            Перейти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>

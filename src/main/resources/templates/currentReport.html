@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="type" type="String"*/-->
+<head>
+    <meta charset="UTF-8">
+    <title>Сгенерировано!</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <script src="../static/chart/Chart.bundle.js" th:src="@{/chart/Chart.bundle.js}"></script>
+    <script src="../static/chart/Chart.bundle.min.js" th:src="@{/chart/Chart.bundle.min.js}"></script>
+</head>
+<body>
+<div th:if="${type} == 'pie'">
+    <canvas id="pieChart" width="600" height="400"></canvas>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        window.onload = function () {
+            if (![[${labels}]])
+                return;
+            if (![[${data}]])
+                return;
+            var pieCanvas = document.getElementById("pieChart");
+            Chart.defaults.global.defaultFontFamily = "Lato";
+            Chart.defaults.global.defaultFontSize = 18;
+
+            var pieData = {
+                labels: [[${labels}]],
+                datasets: [{
+                    data: [[${data}]],
+                    backgroundColor: [[${background}]]
+                }]
+            };
+
+            var pieChart = new Chart(pieCanvas, {
+                type: 'pie',
+                data: pieData
+            });
+        };
+
+        /*]]>*/
+    </script>
+</div>
+<div th:if="${type} == 'pillar'">
+    <canvas id="pillarChart" width="600" height="400"></canvas>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        window.onload = function () {
+            if (![[${labels}]])
+                return;
+            if (![[${data}]])
+                return;
+            var pillarCanvas = document.getElementById("pillarChart");
+            Chart.defaults.global.defaultFontFamily = "Lato";
+            Chart.defaults.global.defaultFontSize = 18;
+            var avgLengthData = {
+                label: 'Средняя продолжительность болезни, дн.',
+                data: [[${data}]]
+            };
+            var pillarChart = new Chart(pillarCanvas, {
+                type: 'bar',
+                data: {
+                    labels: [[${labels}]],
+                    datasets: [avgLengthData]
+                }
+            });
+        };
+
+        /*]]>*/
+    </script>
+</div>
+</body>
+</html>

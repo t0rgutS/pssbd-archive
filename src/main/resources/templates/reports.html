@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчетность</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <a th:href="'/mainPage'" class="btn btn-outline-success" type="submit">На главную</a>
+        <form class="form-inline my-2 my-lg-0">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">Выход
+            </button>
+        </form>
+    </nav>
+</div>
+
+<form>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/round_dia.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Процент заболеваний по районам</h5>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info" name="showDistrictPercentage">
+                            Сгенерировать отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/pillar_dia.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Средняя продолжительность болезней</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="showAvgLength">
+                            Сгенерировать отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/xls_rep.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Количество заболеваний по сезонам</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="showIllsBySeasons">
+                            Сгенерировать отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/xls_rep.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Затраты государственных детсадов</h5>
+                        <p>Год: <select id="year" name="year" class="ml-2 mt-2">
+                            <option value="0" selected>Не указано</option>
+                            <option value="2001">2001</option>
+                            <option value="2002">2002</option>
+                            <option value="2003">2003</option>
+                            <option value="2004">2004</option>
+                            <option value="2005">2005</option>
+                            <option value="2006">2006</option>
+                            <option value="2007">2007</option>
+                            <option value="2008">2008</option>
+                            <option value="2009">2009</option>
+                            <option value="2010">2010</option>
+                            <option value="2011">2011</option>
+                            <option value="2012">2012</option>
+                            <option value="2013">2013</option>
+                            <option value="2014">2014</option>
+                            <option value="2015">2015</option>
+                            <option value="2016">2016</option>
+                            <option value="2017">2017</option>
+                            <option value="2018">2018</option>
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                        </select></p>
+                        <p>Месяц: <select id="month" name="month" class="ml-2">
+                            <option value="0" selected>Не указано</option>
+                            <option value="1">Январь</option>
+                            <option value="2">Февраль</option>
+                            <option value="3">Март</option>
+                            <option value="4">Апрель</option>
+                            <option value="5">Май</option>
+                            <option value="6">Июнь</option>
+                            <option value="7">Июль</option>
+                            <option value="8">Август</option>
+                            <option value="9">Сентябрь</option>
+                            <option value="10">Октябрь</option>
+                            <option value="11">Ноябрь</option>
+                            <option value="12">Декабрь</option>
+                        </select></p>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="showGovernCost">
+                            Сгенерировать отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8 col-lg-4">
+                <div class="card mt-3 mb-3">
+                    <div class="card-header">
+                        <img class="card-img-top" th:src="@{/images/xls_rep.png}"
+                             th:alt="'Тут должна быть картинка, но её нет...'">
+                    </div>
+                    <div class="card-body">
+                        <h5 align="center" class="card-title mt-2">Список болезней, которыми заразились уже привитые
+                            люди</h5>
+                    </div>
+                    <div class="card-footer align-content-center">
+                        <button type="submit" class="btn btn-info" name="showAlreadyGrafted">
+                            Сгенерировать отчет
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>

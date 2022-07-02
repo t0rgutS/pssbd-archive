@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <style>
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="garden" type="com.vakhnenko.entities.Garden"*/-->
+<div th:if="${garden} != null">
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline">
+            <a th:href="'/mainPage'" class="btn btn-outline-success mr-5" type="submit">На главную</a>
+            <!--/*@thymesVar id="acess" type="boolean"*/-->
+        </form>
+        <form class="form-inline">
+            <!--/*@thymesVar id="login" type="String"*/-->
+            <button type="submit" class="btn btn-danger" name="logout" th:text="'Выход (' + ${login} + ')'">
+            </button>
+        </form>
+    </nav>
+</div>
+<!--/*@thymesVar id="access" type="boolean"*/-->
+<!--/*@thymesVar id="accessMain" type="boolean"*/-->
+<form method="post">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <button th:if="${accessMain}" class='btn btn-primary' name="change" th:value="${garden.getId()}"><img
+                    th:src="@{/images/redact.png}"
+                    th:alt="'Нажмите сюда для редактирования'"
+                    style="width: 50px; height: 30px"></button>
+            <h2 class="display-1" th:text="'Детский сад №' + ${garden.getNumber()}"></h2>
+            <p class="lead" th:text="'Район: ' + ${garden.getDistrict()}"></p>
+            <p class="lead" th:text="'Тип собственности: ' + ${garden.getType()}"></p>
+            <p class="lead" th:text="'Год основания: ' + ${garden.getCr_year()}"></p>
+            <p class="lead" th:text="'Количество воспитанников: ' + ${garden.getKids_count()}"></p>
+        </div>
+    </div>
+    <br>
+    <div class="row ml-5 mr-5">
+        <!--/*@thymesVar id="groups" type="String[]"*/-->
+        <div class="col-sm-6 col-lg-3" th:each="gr : ${groups}">
+            <div class="card">
+                <img class="card-img-top" th:src="@{/images/card_top.png}" th:alt="'Опять не прогрузилось...'">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${gr} + ' группа'"></h5>
+                    <button type="submit" class="btn btn-info" name="viewKids"
+                            th:value="${garden.getId()} + ' ' + ${gr}">Посмотреть
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mt-5">
+            <div class="card">
+                <img class="card-img-top" th:src="@{/images/card_top.png}" th:alt="'Опять не прогрузилось...'">
+                <div class="card-body">
+                    <h5 class="card-title">Все воспитанники</h5>
+                    <button type="submit" class="btn btn-info" name="viewKids" th:value="${garden.getId()}">
+                        Посмотреть
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--/*@thymesVar id="error" type="String"*/-->
+<div th:if="${error} != null">
+    <p th:replace="modals :: errorModal(${error})"></p>
+</div>
+</body>
+</html>
